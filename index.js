@@ -19,9 +19,13 @@ const pool = new Pool({
 app.get('/buscar/:documento', async (req, res) => {
   const documento = req.params.documento;
   try {
-    const result = await pool.query('SELECT item FROM personas WHERE documento = $1', [documento]);
+    const result = await pool.query(
+      'SELECT item, nombre_completo FROM personas WHERE documento = $1',
+      [documento]
+    );
     if (result.rows.length > 0) {
-      res.json({ item: result.rows[0].item });
+      const row = result.rows[0];
+      res.json({ item: row.item, nombre_completo: row.nombre_completo });
     } else {
       res.status(404).json({ error: 'No encontrado' });
     }
